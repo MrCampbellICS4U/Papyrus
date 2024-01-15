@@ -7,6 +7,24 @@ public class Widgets {
         
     }
 }
+
+class LibraryWidget extends SnapFromPanel {
+    static LibraryWidgetPanel libraryWidgetPanel;
+
+    LibraryWidget(Library library) {
+        super(libraryWidgetPanel = new LibraryWidgetPanel(library), 3, "Library");
+
+    }
+} 
+
+class LibraryWidgetPanel extends JPanel {
+    LibraryWidgetPanel(Library library) {
+        setLayout(new BorderLayout());
+        setBackground(Color.WHITE);
+    }
+}
+
+
 class Widget1 extends SnapFromPanel {
     Widget1() {
         super(new Widget1Panel(),3, "Widget 1");

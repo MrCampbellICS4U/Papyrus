@@ -1,6 +1,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.Date;
 
 public class Papyrus {
 
@@ -51,7 +52,19 @@ public class Papyrus {
 }
 
 class PapyrusPanel extends SnappablePanel {
+
+    static Library library = new Library("Library", new LibraryComparator(LibraryComparator.Type.NAME));
+    static {
+        library.add(new Item("The Great Gatsby", new Date(1925, 4, 10), new Date(2019, 4, 10), "F. Scott", "Fitzgerald", "", "", ""));
+        System.out.println(library);
+    }
+    static SnapFromPanel[] snappablePanels = {new Widget1(), new LibraryWidget(library), new Widget2()};
+
+    PapyrusPanel(SnapFromPanel[] snappablePanels) {
+        super(snappablePanels);
+    }
+
     PapyrusPanel() {
-        super(new SnapFromPanel[] { new Widget1(), new Widget2(), new Widget3() });
+        super(snappablePanels);
     }
 }
