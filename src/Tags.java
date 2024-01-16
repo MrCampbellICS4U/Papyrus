@@ -1,7 +1,9 @@
-public class Tags {
-    String tag;
+import java.util.*;
 
-    Tags(String tag) {
-        this.tag = tag;
+public class Tags {
+
+    Tags() {
+        
     }    
+
 }

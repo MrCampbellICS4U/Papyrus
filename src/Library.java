@@ -5,9 +5,9 @@ import java.util.Date;
 
 public class Library extends TreeSet<Item> {
     public Set<Tags> tags;
-    public String name;
-    public Date dateCreated;
-    public Date dateModified;
+    public String name = "Library1";
+    public Date dateCreated = new Date();
+    public Date dateModified = new Date();
 
     public Library(String name, LibraryComparator comparator) {
         super(comparator);
@@ -40,33 +40,33 @@ public class Library extends TreeSet<Item> {
 
     public Item getItem(String name) {
         for (Item item : this) {
-            if (item.getName().equals(name)) {
-                return item;
-            }
+            // if (item.getName().equals(name)) {
+                // return item;
+            // }
         }
         return null;
     }
 
-    public Item getItem(Item item) {
-        return this.getItem(item.getName());
-    }
+    // public Item getItem(Item item) {
+        // return this.getItem(item.getName());
+    // }
 
     public boolean hasItem(String name) {
         return this.getItem(name) != null;
     }
 
-    public boolean hasItem(Item item) {
-        return this.hasItem(item.getName());
-    }
+    // public boolean hasItem(Item item) {
+    //     return this.hasItem(item.getName());
+    // }
 
-    public Item getItem(int id) {
-        for (Item item : this) {
-            if (item.getId() == id) {
-                return item;
-            }
-        }
-        return null;
-    }    
+    // public Item getItem(int id) {
+    //     for (Item item : this) {
+    //         if (item.getId() == id) {
+    //             return item;
+    //         }
+    //     }
+    //     return null;
+    // }    
     
     @Override
     public String toString() {
@@ -101,10 +101,10 @@ class LibraryComparator implements Comparator<Item> {
     @Override
     public int compare(Item item1, Item item2) {
         switch (this.sortBy) {
-            case NAME:
-                return item1.getName().compareTo(item2.getName());
-            case ID:
-                return item1.getId() - item2.getId();
+            // case NAME:
+            //     return item1.getName().compareTo(item2.getName());
+            // case ID:
+            //     return item1.getId() - item2.getId();
             default:
                 return 0;
         }

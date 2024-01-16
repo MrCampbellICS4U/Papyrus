@@ -12,16 +12,45 @@ class LibraryWidget extends SnapFromPanel {
     static LibraryWidgetPanel libraryWidgetPanel;
 
     LibraryWidget(Library library) {
-        super(libraryWidgetPanel = new LibraryWidgetPanel(library), 3, "Library");
+        super(libraryWidgetPanel = new LibraryWidgetPanel(library), 3, "Library");        
 
     }
 } 
 
 class LibraryWidgetPanel extends JPanel {
+    private JScrollPane scrollPane = new JScrollPane(this);
+
     LibraryWidgetPanel(Library library) {
-        setLayout(new BorderLayout());
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
         setBackground(Color.WHITE);
+        scrollPane.setViewportView(this);
+        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
     }
+
+    void updateLibrary(Library library) {
+        removeAll();
+        for (Item item : library) {
+            add(new LibraryItem(item));
+        }
+        revalidate();
+        repaint();
+    }
+
+    class LibraryItem extends JPanel {
+        LibraryItem(Item item) {
+            setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
+            setBackground(Color.WHITE);
+            add(new JLabel(item.getName()));
+            add(Box.createHorizontalGlue());
+            add(new JLabel(item.getDatePublished().toString()));
+            add(Box.createHorizontalGlue());
+            add(new JLabel(item.getDateAdded().toString()));
+            add(Box.createHorizontalGlue());
+            // add(new JLabel(item.getTags().toString()));
+            add(new JLabel("ABLAHOUBLAH"));
+        }
+    }
+
 }
 
 

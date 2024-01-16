@@ -62,9 +62,15 @@ class PapyrusPanel extends SnappablePanel {
 
     PapyrusPanel(SnapFromPanel[] snappablePanels) {
         super(snappablePanels);
+        updateLibrary(library);
     }
 
     PapyrusPanel() {
         super(snappablePanels);
+        updateLibrary(library);
+    }
+
+    public void updateLibrary(Library library) {
+        ((LibraryWidgetPanel) snappablePanels[1].getComponent(0)).updateLibrary(library);
     }
 }
