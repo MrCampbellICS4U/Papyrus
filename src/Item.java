@@ -1,6 +1,9 @@
 import java.util.Date;
 import java.util.HashMap;
 import java.util.ArrayList;
+import java.awt.*;
+import java.awt.event.*;
+import javax.swing.*;
 
 public class Item {
 
@@ -153,3 +156,13 @@ public class Item {
     }
 
 }
+
+class ItemPanel extends JPanel {
+    private Item item;
+
+    public ItemPanel(Item item) {
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBackground(Color.WHITE);
+    }
+}
+

@@ -22,10 +22,16 @@ public class Library extends TreeSet<Item> {
         }
     }
 
-    @Override 
-    public boolean add(Item item) {
-        return super.add(item);
-    }
+    // @Override 
+    // public boolean add(Item item) {
+    //     System.out.println("Adding item: " + item.getName());
+    //     if (this.hasItem(item.getName())) {
+    //         System.out.println("Item already in library: " + this.hasItem(item.getName()));
+    //         return false;
+    //     }
+    //     System.out.println(this.size());
+    //     return super.add(item);
+    // }
 
     @Override
     public boolean remove(Object item) {
@@ -76,6 +82,8 @@ public class Library extends TreeSet<Item> {
         }
         return str;
     }
+
+   
 }
 
 class LibraryComparator implements Comparator<Item> {
@@ -101,8 +109,8 @@ class LibraryComparator implements Comparator<Item> {
     @Override
     public int compare(Item item1, Item item2) {
         switch (this.sortBy) {
-            // case NAME:
-            //     return item1.getName().compareTo(item2.getName());
+            case NAME:
+                return item1.getName().compareTo(item2.getName());
             // case ID:
             //     return item1.getId() - item2.getId();
             default:
