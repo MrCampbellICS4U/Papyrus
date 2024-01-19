@@ -8,6 +8,7 @@ public class Library extends TreeSet<Item> {
     public String name = "Library1";
     public Date dateCreated = new Date();
     public Date dateModified = new Date();
+    private Item selectedItem = null;
 
     public Library(String name, LibraryComparator comparator) {
         super(comparator);
@@ -36,6 +37,19 @@ public class Library extends TreeSet<Item> {
     @Override
     public boolean remove(Object item) {
         return super.remove(item);
+    }
+
+    public Item getSelectedItem() {
+        return this.selectedItem;
+    }
+
+    public void setSelectedItem(Item item) {
+        for (Item i : this) {
+            if (i == item) {
+                this.selectedItem = item;
+                return;
+            }
+        }
     }
 
     public Item editItem(Item item, Item newItem) {
@@ -82,7 +96,6 @@ public class Library extends TreeSet<Item> {
         }
         return str;
     }
-
    
 }
 
@@ -101,7 +114,7 @@ class LibraryComparator implements Comparator<Item> {
     }    
 
     private Type sortBy;
-
+    
     public LibraryComparator(Type sortBy) {
         this.sortBy = sortBy;
     }

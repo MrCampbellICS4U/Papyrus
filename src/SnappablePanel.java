@@ -37,7 +37,7 @@ class SnappablePanel extends JPanel {
         adjustPanelSizes(); // Initial adjustment
     }
 
-    private void adjustPanelSizes() {
+    public void adjustPanelSizes() {
         int totalWidth = getWidth();
         int countWidth = 0;
         for (int i = 0; i < snapToPanels.length; i++) {
@@ -47,7 +47,7 @@ class SnappablePanel extends JPanel {
         }
     }
 
-    private void adjustSnapFromPanelSizes() {
+    public void adjustSnapFromPanelSizes() {
         for (int i = 0; i < snappablePanels.length; i++) {
             snappablePanels[i].setBounds(snapToPanels[i].getBounds());
         }

@@ -5,7 +5,7 @@ import javax.swing.*;
 import java.util.*;
 
 //graphics part
-public class Merging extends JFrame {
+public class Merging exatends JFrame {
 private JComboBox<String>item1, item2;
 private JButton mergeButton;
 

@@ -130,6 +130,49 @@ public class Item {
         this.tagList.remove(i);
     }
 
+    public String getComparatorTypeName(LibraryComparator.Type compareType) {
+        switch (compareType) {
+            case NAME:
+                return "Name";
+            case ID: 
+            if (this.id == 0) {
+                return "";
+            }
+                return "ID";
+            case DATEPUBLISHED:
+                if (this.datePublished == null) {
+                    return "";
+                }
+                return "Date Published";
+            case DATEADDED:
+                if (this.dateAdded == null) {
+                    return "";
+                }
+                return "Date Added";
+            case AUTHORFIRST:
+                return "Author First";
+            case AUTHORLAST:
+                return "Author Last";
+            case DOISTRING:
+                if (this.doiString == null) {
+                    return "";
+                }
+                return "DOI";
+            case URLSTRING:
+                if (this.urlString == null) {
+                    return "";
+                }
+                return "URL";
+            case ISBNSTRING:
+                if (this.isbnString == null) {
+                    return "";
+                }
+                return "ISBN";
+            default:
+                return "";
+        }
+    }
+
 
     public String getInfo(LibraryComparator.Type compareType) {
         switch (compareType) {
@@ -156,13 +199,3 @@ public class Item {
     }
 
 }
-
-class ItemPanel extends JPanel {
-    private Item item;
-
-    public ItemPanel(Item item) {
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBackground(Color.WHITE);
-    }
-}
-

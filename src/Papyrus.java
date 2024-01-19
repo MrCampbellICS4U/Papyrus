@@ -13,8 +13,8 @@ public class Papyrus {
         JFrame frame = new JFrame("Papyrus");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLayout(new BorderLayout());
-        frame.setSize(800, 600);
-        frame.setMinimumSize(new Dimension(600, 400));
+        frame.setSize(1200, 600);
+        frame.setMinimumSize(new Dimension(800, 400));
         frame.setLocationRelativeTo(null);
         frame.setJMenuBar(menuBar);
 
@@ -36,6 +36,16 @@ public class Papyrus {
         //         }
         //     }
         // });        
+
+        frame.addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(ComponentEvent e) {
+                papyrusPanel.adjustPanelSizes();
+                papyrusPanel.adjustSnapFromPanelSizes();
+            }
+        });
+
+
 
         frame.add(topBar, BorderLayout.NORTH);
         frame.add(papyrusPanel, BorderLayout.CENTER);
@@ -59,7 +69,9 @@ class PapyrusPanel extends SnappablePanel {
         library.add(new Item("The Catcher in the Rye", new Date(1951, 6, 16), new Date(2019, 4, 10), "J. D.", "Salinger", "", "", ""));
         library.add(new Item("The Grapes of Wrath", new Date(1939, 4, 14), new Date(2019, 4, 10), "John", "Steinbeck", "", "", ""));
     }
-    static SnapFromPanel[] snappablePanels = {new Widget1(), new LibraryWidget(library), new Widget2()};
+    static ItemWidget itemWidget = new ItemWidget(null);
+
+    static SnapFromPanel[] snappablePanels = { new Widget2(), new LibraryWidget(library, itemWidget.getWidgetPanel()), itemWidget};
 
     PapyrusPanel(SnapFromPanel[] snappablePanels) {
         super(snappablePanels);
