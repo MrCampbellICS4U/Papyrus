@@ -1,0 +1,26 @@
+<Library>
+	<Name>Test1</Name>
+	<Description>This is a library</Description>
+	<DateCreated>Mon Jan 22 04:52:22 EST 2024</DateCreated>
+	<DateModified>Mon Jan 22 04:52:22 EST 2024</DateModified>
+	<Item>
+		<Name>Sample Book 4</Name>
+		<DatePublished>null</DatePublished>
+		<DateAdded>null</DateAdded>
+		<AuthorFirst>Jane</AuthorFirst>
+		<AuthorLast>Smith</AuthorLast>
+		<DoiString>10.1000/abc456</DoiString>
+		<UrlString>http://example.com/samplebook2</UrlString>
+		<IsbnString>987-6543210987</IsbnString>
+	</Item>
+	<Item>
+		<Name>Sample Book 5</Name>
+		<DatePublished>null</DatePublished>
+		<DateAdded>null</DateAdded>
+		<AuthorFirst></AuthorFirst>
+		<AuthorLast></AuthorLast>
+		<DoiString></DoiString>
+		<UrlString></UrlString>
+		<IsbnString></IsbnString>
+	</Item>
+</Library>

@@ -45,6 +45,30 @@ public class Item {
         this.tagList = other.tagList;
     }
 
+    public Item() {
+        this.name = "";
+        this.datePublished = null;
+        this.dateAdded = null;
+        this.authorFirst = "";
+        this.authorLast = "";
+        this.doiString = "";
+        this.urlString = "";
+        this.isbnString = "";
+        this.tagList = new ArrayList<String>();
+    }
+
+    public Item(String name) {
+        this.name = name;
+        this.datePublished = null;
+        this.dateAdded = null;
+        this.authorFirst = "";
+        this.authorLast = "";
+        this.doiString = "";
+        this.urlString = "";
+        this.isbnString = "";
+        this.tagList = new ArrayList<String>();
+    }
+
     public String getName() {
         return this.name;
     }
@@ -130,15 +154,48 @@ public class Item {
         this.tagList.remove(i);
     }
 
+    public static Item copy(Item other) {
+        return new Item(other);
+    }
+
+    public void setInfo(LibraryComparator.Type compareType, String info) {
+        switch (compareType) {
+            case NAME:
+                this.name = info;
+                break;
+            case ID: 
+                this.id = Integer.parseInt(info);
+                break;
+            case DATEPUBLISHED:
+                this.datePublished = new Date(info);
+                break;
+            case DATEADDED:
+                this.dateAdded = new Date(info);
+                break;
+            case AUTHORFIRST:
+                this.authorFirst = info;
+                break;
+            case AUTHORLAST: 
+                this.authorLast = info;
+                break;
+            case DOISTRING:
+                this.doiString = info;
+                break;
+            case URLSTRING:
+                this.urlString = info;
+                break;
+            case ISBNSTRING:
+                this.isbnString = info;
+                break;
+        }
+    }
+
     public String getComparatorTypeName(LibraryComparator.Type compareType) {
         switch (compareType) {
             case NAME:
                 return "Name";
             case ID: 
-            if (this.id == 0) {
-                return "";
-            }
-                return "ID";
+                return null;
             case DATEPUBLISHED:
                 if (this.datePublished == null) {
                     return "";

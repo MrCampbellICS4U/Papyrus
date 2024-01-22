@@ -6,9 +6,40 @@ import java.util.Date;
 public class Library extends TreeSet<Item> {
     public Set<Tags> tags;
     public String name = "Library1";
+    public String path = "Library1.ppxml";
     public Date dateCreated = new Date();
     public Date dateModified = new Date();
     private Item selectedItem = null;
+
+    public String description = "This is a library";
+
+    public String getDescription() {
+        return this.description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
+    }
+
+    public String getPath() {
+        return this.path;
+    }
+
+    public Date getDateCreated() {
+        return this.dateCreated;
+    }
+
+    public Date getDateModified() {
+        return this.dateModified;
+    }
 
     public Library(String name, LibraryComparator comparator) {
         super(comparator);
@@ -23,20 +54,36 @@ public class Library extends TreeSet<Item> {
         }
     }
 
-    // @Override 
-    // public boolean add(Item item) {
-    //     System.out.println("Adding item: " + item.getName());
-    //     if (this.hasItem(item.getName())) {
-    //         System.out.println("Item already in library: " + this.hasItem(item.getName()));
-    //         return false;
-    //     }
-    //     System.out.println(this.size());
-    //     return super.add(item);
-    // }
+    public Library sort(LibraryComparator.Type comparator) {
+        Library sortedLibrary = new Library(this.name, this, new LibraryComparator(comparator));
+        for (Item item : this) {
+            sortedLibrary.add(item);
+        }
+        return sortedLibrary;
+    }
+
+    @Override 
+    public boolean add(Item item) {
+        System.out.println("Adding item to Library: " + item.getName());
+                if (this.hasItem(item.getName())) {
+            System.out.println("Item already in library: " + this.hasItem(item.getName()));
+            return false;
+        }
+        System.out.println(this.size());
+        return super.add(item);
+    }
 
     @Override
     public boolean remove(Object item) {
         return super.remove(item);
+    }
+
+    public String getName() {
+        return this.name;
+    }
+
+    public TreeSet<Item> getItems() {
+        return this;
     }
 
     public Item getSelectedItem() {
@@ -121,6 +168,10 @@ class LibraryComparator implements Comparator<Item> {
 
     @Override
     public int compare(Item item1, Item item2) {
+        if (item1 == null || item2 == null) {
+            return (item1 == null) ? ((item2 == null) ? 0 : -1) : 1;
+        }
+
         switch (this.sortBy) {
             case NAME:
                 return item1.getName().compareTo(item2.getName());

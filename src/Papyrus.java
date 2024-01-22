@@ -1,12 +1,13 @@
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import java.util.Date;
+import javax.swing.filechooser.FileNameExtensionFilter;
+
+import java.io.File;
 
 public class Papyrus {
 
-    public PapyrusMenuBar menuBar = new PapyrusMenuBar();
-    public TopBar topBar = new TopBar();
+    public TopBar topBar = new TopBar(PapyrusPanel.libraryWidget.getWidgetPanel());
     public PapyrusPanel papyrusPanel = new PapyrusPanel();
 
     Papyrus() {
@@ -16,6 +17,147 @@ public class Papyrus {
         frame.setSize(1200, 600);
         frame.setMinimumSize(new Dimension(800, 400));
         frame.setLocationRelativeTo(null);
+
+
+
+        ImageIcon icon = new ImageIcon("src/papyrus.png");
+        frame.setIconImage(icon.getImage());
+
+    class PapyrusMenuBar extends JMenuBar {
+        PapyrusMenuBar() {
+            JMenu fileMenu = new JMenu("File");
+            JMenuItem newItem = new JMenuItem("New");
+            JMenuItem openItem = new JMenuItem("Open", KeyEvent.VK_O | KeyEvent.CTRL_DOWN_MASK);
+            openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK));
+            JMenuItem saveItem = new JMenuItem("Save", KeyEvent.VK_S | KeyEvent.CTRL_DOWN_MASK);
+            saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
+            JMenuItem saveAsItem = new JMenuItem("Save As", KeyEvent.VK_S | KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
+            saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
+            JMenu exportAsItem = new JMenu("Export");
+            JMenuItem exportAsBibtex = new JMenuItem("Export as BibTeX");
+            JMenuItem quitItem = new JMenuItem("Quit Papyrus", KeyEvent.VK_Q | KeyEvent.CTRL_DOWN_MASK);
+            quitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
+
+            saveItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    saveLibrary();
+                }
+            });
+
+            saveAsItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    saveLibraryAs();
+                }
+            });
+
+            openItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    openFile();
+                }
+            });
+
+            exportAsBibtex.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    System.out.println("Exporting as BibTeX...");
+                    Library currentLibrary = PapyrusPanel.libraryWidget.getLibrary();
+                    System.out.println("Exporting as BibTeX: " + currentLibrary);
+                    if (currentLibrary != null) {
+                        JFileChooser fileChooser = new JFileChooser();
+                        fileChooser.setFileFilter(new FileNameExtensionFilter("BibTeX Files (.bib)", "bib"));
+
+                        int result = fileChooser.showSaveDialog(null);
+                        if (result == JFileChooser.APPROVE_OPTION) {
+                            File selectedFile = fileChooser.getSelectedFile();
+                            System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+                            LibraryBibtexParser.writeLibrary(currentLibrary, selectedFile.getAbsolutePath());
+                            JOptionPane.showMessageDialog(null, "Library exported successfully!");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "No library to export.", "Error", JOptionPane.ERROR_MESSAGE);
+                    }
+                }
+            });
+
+            quitItem.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    int result = JOptionPane.showConfirmDialog(null, "Would you like to save before exiting?", "Save before exiting?", JOptionPane.YES_NO_CANCEL_OPTION);
+                    if (result == JOptionPane.YES_OPTION) {
+                        saveLibrary();
+                        System.exit(0);
+                    } else if (result == JOptionPane.NO_OPTION) {
+                        System.exit(0);
+                    } else {
+                        // do nothing
+                    }
+                }
+            });
+
+            fileMenu.add(newItem);
+            fileMenu.add(openItem);
+            fileMenu.add(saveItem);
+            fileMenu.add(saveAsItem);
+            exportAsItem.add(exportAsBibtex);
+            fileMenu.add(exportAsItem);
+            fileMenu.add(quitItem);
+
+            this.add(fileMenu);
+        }
+
+        private void openFile() {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setFileFilter(new FileNameExtensionFilter("Papyrus XML Files (.ppxml)", "ppxml"));
+
+            int result = fileChooser.showOpenDialog(this);
+            if (result == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+                Library library = LibraryXMLParser.parseLibrary(selectedFile.getAbsolutePath(), new LibraryComparator(LibraryComparator.Type.NAME));
+                System.out.println("Library loaded: " + library);
+                PapyrusPanel.fileTree.fromLibrary(library);
+            }
+        }
+
+        private void saveLibrary() {
+            System.out.println("Saving library...");
+            Library currentLibrary = PapyrusPanel.libraryWidget.getLibrary();
+            System.out.println("Saving library: " + currentLibrary);
+            if (currentLibrary != null) {
+                LibraryXMLParser.writeLibrary(currentLibrary);
+                JOptionPane.showMessageDialog(null, "Library saved successfully!");
+            } else {
+                JOptionPane.showMessageDialog(null, "No library to save.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+
+        private void saveLibraryAs() {
+            System.out.println("Saving library as...");
+            Library currentLibrary = PapyrusPanel.libraryWidget.getLibrary();
+            System.out.println("Saving library as: " + currentLibrary);
+            if (currentLibrary != null) {
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setFileFilter(new FileNameExtensionFilter("Papyrus XML Files (.ppxml)", "ppxml"));
+
+                int result = fileChooser.showSaveDialog(this);
+                if (result == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    System.out.println("Selected file: " + selectedFile.getAbsolutePath());
+                    currentLibrary.setPath(selectedFile.getAbsolutePath());
+                    LibraryXMLParser.writeLibrary(currentLibrary);
+                    JOptionPane.showMessageDialog(null, "Library saved successfully!");
+                }
+            } else {
+                JOptionPane.showMessageDialog(null, "No library to save.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+        
+    }
+
+        PapyrusMenuBar menuBar = new PapyrusMenuBar();
         frame.setJMenuBar(menuBar);
 
         // So lads, basically when we move a widget, we lose focus on the frame, so we can't use keyboard shortcuts hehe
@@ -53,6 +195,12 @@ public class Papyrus {
     }
 
     public static void main(String[] args) {
+        try {
+            UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+        } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+
         SwingUtilities.invokeLater(new Runnable() {
             public void run() {
                 new Papyrus();
@@ -64,14 +212,24 @@ public class Papyrus {
 class PapyrusPanel extends SnappablePanel {
 
     static Library library = new Library("Library", new LibraryComparator(LibraryComparator.Type.NAME));
-    static {
-        library.add(new Item("The Great Gatsby", new Date(1925, 4, 10), new Date(2019, 4, 10), "F. Scott", "Fitzgerald", "", "", ""));
-        library.add(new Item("The Catcher in the Rye", new Date(1951, 6, 16), new Date(2019, 4, 10), "J. D.", "Salinger", "", "", ""));
-        library.add(new Item("The Grapes of Wrath", new Date(1939, 4, 14), new Date(2019, 4, 10), "John", "Steinbeck", "", "", ""));
-    }
+
     static ItemWidget itemWidget = new ItemWidget(null);
 
-    static SnapFromPanel[] snappablePanels = { new Widget2(), new LibraryWidget(library, itemWidget.getWidgetPanel()), itemWidget};
+    static FileTree fileTree = new FileTree(); 
+    static FileTreeWidgetPanel fileTreeWidgetPanel = new FileTreeWidgetPanel(fileTree);
+    static {
+        fileTree.setPanel(fileTreeWidgetPanel);
+    }
+    static FileTreeWidget fileTreeWidget = new FileTreeWidget(fileTree);
+    static LibraryWidget libraryWidget = new LibraryWidget(library, itemWidget.getWidgetPanel());
+
+
+
+    static SnapFromPanel[] snappablePanels = {
+        fileTreeWidget, 
+        libraryWidget,
+        itemWidget
+    };
 
     PapyrusPanel(SnapFromPanel[] snappablePanels) {
         super(snappablePanels);
@@ -83,7 +241,11 @@ class PapyrusPanel extends SnappablePanel {
         updateLibrary(library);
     }
 
+    public Library getLibrary() {
+        return library;
+    }
+
     void updateLibrary(Library library) {
-        ((LibraryWidget) snappablePanels[1]).updateLibrary(library);
+        libraryWidget.updateLibrary(library);
     }
 }

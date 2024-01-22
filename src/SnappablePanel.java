@@ -146,6 +146,14 @@ class SnapFromPanel extends JPanel {
         this(new JPanel(), 4);
     }
 
+    void setText(String text) {
+        topDragPanel.removeAll();
+        topDragPanel.add(topDragPanel.dragButton, BorderLayout.WEST); 
+        topDragPanel.add(new JLabel(text), BorderLayout.CENTER);
+        topDragPanel.revalidate();
+        topDragPanel.repaint();
+    }
+
     private void snapPanel(SnapFromPanel panel) {
         SnappablePanel mainPanel = (SnappablePanel) SwingUtilities.getAncestorOfClass(SnappablePanel.class, panel);
         if (mainPanel != null) {
