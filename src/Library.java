@@ -264,9 +264,15 @@ class LibraryComparator implements Comparator<Item> {
                 return item1.getId() > item2.getId() ? 1 : -1;
 
             case DATEPUBLISHED:
+                if (item1.getDatePublished() == null || item2.getDatePublished() == null) {
+                    return (item1.getDatePublished() == null) ? ((item2.getDatePublished() == null) ? 0 : -1) : 1;
+                }
                 return item1.getDatePublished().compareTo(item2.getDatePublished());
                 
             case DATEADDED:
+                if (item1.getDateAdded() == null || item2.getDateAdded() == null) {
+                    return (item1.getDateAdded() == null) ? ((item2.getDateAdded() == null) ? 0 : -1) : 1;
+                }
                 return item1.getDateAdded().compareTo(item2.getDateAdded());
 
             case AUTHORFIRST:

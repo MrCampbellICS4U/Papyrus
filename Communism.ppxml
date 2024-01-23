@@ -1,0 +1,26 @@
+<Library>
+	<Name>Library</Name>
+	<Description>This is a library</Description>
+	<DateCreated>1-1-1400</DateCreated>
+	<DateModified>1-1-1400</DateModified>
+	<Item>
+		<Name>Animal Farm</Name>
+		<DatePublished>null</DatePublished>
+		<DateAdded>8-2-1400</DateAdded>
+		<AuthorFirst>Orwell</AuthorFirst>
+		<AuthorLast>George</AuthorLast>
+		<DoiString></DoiString>
+		<UrlString></UrlString>
+		<IsbnString></IsbnString>
+	</Item>
+	<Item>
+		<Name>1984</Name>
+		<DatePublished>null</DatePublished>
+		<DateAdded>26-5-1984</DateAdded>
+		<AuthorFirst>George</AuthorFirst>
+		<AuthorLast>Orwell</AuthorLast>
+		<DoiString></DoiString>
+		<UrlString></UrlString>
+		<IsbnString></IsbnString>
+	</Item>
+</Library>

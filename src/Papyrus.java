@@ -142,11 +142,17 @@ public class Papyrus {
                                 libraryWidget.getWidgetPanel().revalidate();
                                 libraryWidget.getWidgetPanel().itemGrid.revalidate();
                                 libraryWidget.getWidgetPanel().itemGrid.repaint();
-                                
                             }
                             else if (selectedFile.getName().endsWith(".ppxml")) {
                                 Library library = LibraryXMLParser.parseLibrary(selectedFile.getAbsolutePath(), new LibraryComparator(LibraryComparator.Type.NAME));
                                 PapyrusPanel.library.addAll(library);
+                                LibraryWidget libraryWidget = PapyrusPanel.libraryWidget;
+                                LibraryWidgetPanel.ItemGrid.refresh();
+                                libraryWidget.updateLibrary(libraryWidget.getLibrary());
+                                libraryWidget.getWidgetPanel().repaint();
+                                libraryWidget.getWidgetPanel().revalidate();
+                                libraryWidget.getWidgetPanel().itemGrid.revalidate();
+                                libraryWidget.getWidgetPanel().itemGrid.repaint();
                             }
                             else {
                                 JOptionPane.showMessageDialog(null, "Invalid file type.", "Error", JOptionPane.ERROR_MESSAGE);
