@@ -2,6 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
+// Snappable panel class is a driver class for the snapping Panel system
 class SnappablePanel extends JPanel {
     JLayeredPane layeredPane = new JLayeredPane();
     SnapToPanel[] snapToPanels = new SnapToPanel[3];
@@ -26,6 +27,7 @@ class SnappablePanel extends JPanel {
         }
 
         // Add component listener to handle resizing
+        // TODO: Make this work with fullscreen
         addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -37,6 +39,9 @@ class SnappablePanel extends JPanel {
         adjustPanelSizes(); // Initial adjustment
     }
 
+    /**
+     * Adjusts the sizes of the snapToPanels based on the size of the SnappablePanels
+     */
     public void adjustPanelSizes() {
         int totalWidth = getWidth();
         int countWidth = 0;
@@ -47,26 +52,43 @@ class SnappablePanel extends JPanel {
         }
     }
 
+    /**
+     * Adjusts the sizes of the snapFromPanels based on the size of the snapToPanels
+     */
     public void adjustSnapFromPanelSizes() {
         for (int i = 0; i < snappablePanels.length; i++) {
             snappablePanels[i].setBounds(snapToPanels[i].getBounds());
         }
     }
 
-
-  public void addSnapFromPanel(SnapFromPanel snapFromPanel, SnapToPanel snapToPanel) {
-        snapFromPanel.setBounds(snapToPanel.getBounds()); // Set initial position and size
-        layeredPane.add(snapFromPanel, JLayeredPane.DRAG_LAYER);
-        layeredPane.revalidate();
-        layeredPane.repaint();
+    /**
+     * Adds a snapFromPanel to the layeredPane
+     * @param snapFromPanel
+     * @param snapToPanel
+     */
+    public void addSnapFromPanel(SnapFromPanel snapFromPanel, SnapToPanel snapToPanel) {
+            snapFromPanel.setBounds(snapToPanel.getBounds());
+            // put the snapFromPanel on the draggable layer
+            layeredPane.add(snapFromPanel, JLayeredPane.DRAG_LAYER);
+            layeredPane.revalidate();
+            layeredPane.repaint();
     }
 
+    /**
+     * Removes a snapFromPanel from the layeredPane
+     * @param snappablePanel
+     */
     public void removeSnapFromPanel(SnapFromPanel snappablePanel) {
         layeredPane.remove(snappablePanel);
         layeredPane.revalidate();
         layeredPane.repaint();
     }
 
+    /**
+     * Snaps a snapFromPanel to a snapToPanel
+     * @param snappablePanel
+     * @param snapToPanel
+     */
     public void snapTo(SnapFromPanel snappablePanel, SnapToPanel snapToPanel) {
         // Rectangle bounds = snapToPanel.getBounds();
         // snappablePanel.setBounds(bounds); 
@@ -93,15 +115,21 @@ class SnappablePanel extends JPanel {
         layeredPane.revalidate();
         layeredPane.repaint();
     }
-    
+
+    /**
+     * Unsnaps a snapFromPanel from a snapToPanel
+     * @param snappablePanel
+     * @param snapToPanel
+     */
     public void unsnap(SnapFromPanel snappablePanel, SnapToPanel snapToPanel) {
         removeSnapFromPanel(snappablePanel);
-        // You can add additional logic for default positioning if needed
-        // For example, add it back with some default bounds
         addSnapFromPanel(snappablePanel, snapToPanel);
     }
 }
 
+
+// SnapToPanel and SnapFromPanel classes are the panels that are snapped together
+// SnapToPanel is the panel that is snapped to, these are three fixed panels
 class SnapToPanel extends JPanel {
 
     int scale;
@@ -114,20 +142,18 @@ class SnapToPanel extends JPanel {
 }
 
 class SnapFromPanel extends JPanel {
+    // Define the point where the mouse is pressed
     private Point mousePressPoint;
-    
     private TopDragPanel topDragPanel = new TopDragPanel();
     boolean dragging = false;
     
+    /**
+     * Constructor for SnapFromPanel, adds the panel that is desired to be snapped to the layout
+     * @param panel
+     * @param scale
+     */
     SnapFromPanel(JPanel panel, int scale) {
-
-
         setLayout(new BorderLayout());
-        SnappablePanel mainPanel = (SnappablePanel) SwingUtilities.getAncestorOfClass(SnappablePanel.class, this);
-        if (mainPanel != null) {
-            setPreferredSize(new Dimension(mainPanel.getWidth() / scale, mainPanel.getHeight()));
-        }
-
         add(panel, BorderLayout.CENTER);
         add(topDragPanel, BorderLayout.NORTH);
     }
@@ -146,6 +172,10 @@ class SnapFromPanel extends JPanel {
         this(new JPanel(), 4);
     }
 
+    /**
+     * Sets the text of the topDragPanel
+     * @param text
+     */
     void setText(String text) {
         topDragPanel.removeAll();
         topDragPanel.add(topDragPanel.dragButton, BorderLayout.WEST); 
@@ -154,6 +184,10 @@ class SnapFromPanel extends JPanel {
         topDragPanel.repaint();
     }
 
+    /**
+     * Snaps the panel to the nearest snapToPanel
+     * @param panel
+     */
     private void snapPanel(SnapFromPanel panel) {
         SnappablePanel mainPanel = (SnappablePanel) SwingUtilities.getAncestorOfClass(SnappablePanel.class, panel);
         if (mainPanel != null) {
@@ -162,6 +196,7 @@ class SnapFromPanel extends JPanel {
             int minDistance = Integer.MAX_VALUE;
 
             for (SnapToPanel snapToPanel : mainPanel.snapToPanels) {
+                // Calculate the distance between the two panels
                 int distance = calculateDistance(panel.getLocation(), snapToPanel.getLocation());
                 if (distance < minDistance) {
                     minDistance = distance;
@@ -172,7 +207,13 @@ class SnapFromPanel extends JPanel {
             mainPanel.snapTo(panel, nearestPanel);
         }
     }
-
+    
+    /**
+     * Calculates the distance between two points
+     * @param p1
+     * @param p2
+     * @return
+     */
     private int calculateDistance(Point p1, Point p2) {
         return (int) Math.sqrt(Math.pow(p2.x - p1.x, 2) + Math.pow(p2.y - p1.y, 2));
     }
@@ -194,6 +235,9 @@ class SnapFromPanel extends JPanel {
         }
 
         class DragButton extends JButton {
+            /**
+             * Constructor for the DragButton class
+             */
             DragButton() {
                 setPreferredSize(new Dimension(35, 25));
                 setMargin(new Insets(0, 0, 0, 10));
@@ -206,6 +250,10 @@ class SnapFromPanel extends JPanel {
             }
 
             MouseAdapter mouseHandler = new MouseAdapter() {
+                /**
+                 * Handles the mouse events for the DragButton
+                 * @param e
+                 */
                 @Override
                 public void mousePressed(MouseEvent e) {
                     mousePressPoint = e.getPoint();
@@ -214,6 +262,9 @@ class SnapFromPanel extends JPanel {
                     snapPanel(SnapFromPanel.this);
                 }
 
+                /**
+                 * Handles the mouse events for the DragButton
+                 */
                 @Override
                 public void mouseDragged(MouseEvent e) {
                     if (!dragging) {
@@ -221,10 +272,14 @@ class SnapFromPanel extends JPanel {
                     }
                     Point newPoint = e.getLocationOnScreen();
                     SwingUtilities.convertPointFromScreen(newPoint, SnapFromPanel.this.getParent());
-                    newPoint.translate(-mousePressPoint.x , -mousePressPoint.y );
+                    newPoint.translate(-mousePressPoint.x , -mousePressPoint.y);
                     SnapFromPanel.this.setLocation(newPoint);
                 }
 
+                /**
+                 * Handles the mouse events for the DragButton, snaps the panel to the nearest snapToPanel when the mouse is released
+                 * @param e
+                 */
                 @Override
                 public void mouseReleased(MouseEvent e) {
                     dragging = false;
@@ -233,6 +288,7 @@ class SnapFromPanel extends JPanel {
                 }
             };
 
+            // Add the mouse handler to the DragButton, in a way that it will only be added once
             {
                 addMouseListener(mouseHandler);
                 addMouseMotionListener(mouseHandler);

@@ -4,6 +4,11 @@ import java.io.IOException;
 
 public class LibraryBibtexParser {
 
+    /**
+     * Writes a library to a Bibtex file
+     * @param library
+     * @param filePath
+     */
     public static void writeLibrary(Library library, String filePath) {
         StringBuilder bibtexContent = new StringBuilder();
 
@@ -21,6 +26,11 @@ public class LibraryBibtexParser {
         }
     }
 
+    /**
+     * Converts an item to a Bibtex entry
+     * @param item
+     * @return
+     */
     private static String convertItemToBibtexEntry(Item item) {
         return String.format("@article{%s,\n  author = {%s},\n  title = {%s},\n  year = {%s},\n}",
                 item.getId(),
@@ -31,6 +41,12 @@ public class LibraryBibtexParser {
         );
     }
 
+    /**
+     * Formats the author names for Bibtex
+     * @param authorFirst
+     * @param authorLast
+     * @return
+     */
     private static String formatAuthors(String authorFirst, String authorLast) {
         return authorLast + ", " + authorFirst;
     }

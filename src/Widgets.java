@@ -1,15 +1,20 @@
 import java.awt.*;
 import javax.swing.*;
 import java.awt.event.*;
-
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.DefaultTreeModel;
 import javax.swing.tree.TreeSelectionModel;
 import javax.swing.tree.TreePath;
 
+// ItemWidget class that is used to display an item in the UI
 class ItemWidget extends SnapFromPanel {
     static ItemWidgetPanel itemWidgetPanel;
     private JScrollPane scrollPane;
+
+    /**
+     * Constructor that accepts an Item object
+     * @param item
+     */
     ItemWidget(Item item) {
         super(itemWidgetPanel = new ItemWidgetPanel(item), 3, item == null ? " " : item.getName());
         scrollPane = new JScrollPane();
@@ -17,40 +22,66 @@ class ItemWidget extends SnapFromPanel {
         add(scrollPane);
     }
 
+    /**
+     * Returns the ItemWidgetPanel object
+     * @return ItemWidgetPanel
+     */
     ItemWidgetPanel getWidgetPanel() {
         return itemWidgetPanel;
     }
 
+    /**
+     * Updates the item in the ItemWidgetPanel
+     * @param item
+     */
     void updateItem(Item item) {
         itemWidgetPanel.updateItem(item);
 
     }
 
+    /**
+     * Returns the Item object
+     * @return Item
+     */
     Item getItem() {
         return itemWidgetPanel.getItem();
     }
 
+    /**
+     * Sets the Item object
+     * @param item
+     * @return Item
+     */
     Item setNewItem(Item item) {
         itemWidgetPanel.updateItem(item);
         return itemWidgetPanel.getItem();
     }
 }
 
+// ItemWidgetPanel class that is used to be put inside the ItemWidget class (i.e. the panel that goes inside the snap panel)
 class ItemWidgetPanel extends JPanel {
     private Item item = null;
-    private Item oldItem = null;
+
+    /**
+     * Constructor that accepts an Item object
+     * @param item
+     */
     ItemWidgetPanel(Item item) {
-        this.oldItem = item;
         this.item = item;
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+        setBorder(BorderFactory.createEmptyBorder(5, 10, 10, 10));
         setBackground(Color.WHITE);
         updateItem(item);
     }
 
-
+    // ItemAttributeWidget class that is used to display an item attribute in the Item Widget Panel, whcih is editable
     class ItemAttributeWidget extends JPanel {
         LibraryComparator.Type itemAttribute = null;
 
+        /**
+         * Constructor that accepts a LibraryComparator.Type object
+         * @param itemAttribute
+         */
         ItemAttributeWidget(LibraryComparator.Type itemAttribute) {
             this.itemAttribute = itemAttribute;
             if (itemAttribute == null || item == null || item.getComparatorTypeName(itemAttribute) == null) {
@@ -60,7 +91,9 @@ class ItemWidgetPanel extends JPanel {
 
             setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
             setBackground(Color.WHITE);
-            setBorder(BorderFactory.createDashedBorder(Color.BLACK, 1, 1, 2, false));
+            setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
+
+            // add panel with label and text field for each item attribute
             add(new JPanel() {
                 {
                     setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -72,11 +105,13 @@ class ItemWidgetPanel extends JPanel {
 
                     add(Box.createHorizontalGlue());
                 }
-            }
-            );
+            });
+
             add(Box.createHorizontalGlue());
             JTextField nameTextField = new JTextField(item.getInfo(itemAttribute));
             nameTextField.setSize(50, 12);
+
+            // THESE FIVE LINES TOOK ME 40 MINUTES AHAHAHASHAH
             nameTextField.addFocusListener(new FocusListener() {
                 public void focusGained(FocusEvent e) {
                 }
@@ -89,11 +124,19 @@ class ItemWidgetPanel extends JPanel {
             add(nameTextField);
         }
 
+        /**
+         * Returns the LibraryComparator.Type object
+         * @return LibraryComparator.Type
+         */
         LibraryComparator.Type getItem() {
             return itemAttribute;
         }
     }
 
+    /**
+     * Draws the item in the ItemWidgetPanel
+     * @param item
+     */
     void drawItem(Item item) {
         add(new JPanel() {
             {
@@ -121,7 +164,12 @@ class ItemWidgetPanel extends JPanel {
         buttonPanel.add(Box.createHorizontalGlue());
 
         JButton deleteButton = new JButton("Delete");
+        // button to delete item
         deleteButton.addActionListener(new ActionListener() {
+            /**
+             * Deletes the item from the library
+             * @param e
+             */
             public void actionPerformed(ActionEvent e) {
                 Library library = LibraryWidget.libraryWidgetPanel.getLibrary();
                 if (!library.contains(item)) {
@@ -140,12 +188,15 @@ class ItemWidgetPanel extends JPanel {
         });
 
         buttonPanel.add(deleteButton);
-
+        // button to save item
         JButton saveButton = new JButton("Save");
         saveButton.addActionListener(new ActionListener() {
+            /**
+             * Saves the item to the library
+             * @param e
+             */
             public void actionPerformed(ActionEvent e) {
-                saveEditedItem(item);
-                System.out.println("Saved item: " + item.getName());
+                saveEditedItem();
             }
         });
 
@@ -156,24 +207,20 @@ class ItemWidgetPanel extends JPanel {
         add(buttonPanel);
     }
 
-    private void saveEditedItem(Item item) {
-        Library library = LibraryWidget.libraryWidgetPanel.getLibrary();
-        if (!library.contains(oldItem)) {
-            return;
-        }
-        library.remove(oldItem);
-        library.add(item);
-        System.out.println("Saved item: " + item.getName());
-        LibraryWidgetPanel libraryWidgetPanel = LibraryWidget.libraryWidgetPanel;
-        libraryWidgetPanel.refresh();
-        FileTreeWidget.fileTreeWidgetPanel.fromLibrary(libraryWidgetPanel.getLibrary());
-
+    /**
+     * Updates the item in the ItemWidgetPanel
+     * @param item
+     */
+    private void saveEditedItem() {
+        LibraryWidgetPanel.ItemGrid.refresh();
         revalidate();
         repaint();
-
     }
 
-
+    /**
+     * Updates the item in the ItemWidgetPanel
+     * @param item
+     */
     void updateItem(Item item) {
         this.item = item;
         removeAll();
@@ -188,6 +235,10 @@ class ItemWidgetPanel extends JPanel {
         revalidate();
     }
 
+    /**
+     * Returns the Item object
+     * @return Item
+     */
     Item getItem() {
         return item;
     }
@@ -198,6 +249,11 @@ class LibraryWidget extends SnapFromPanel {
     private JScrollPane scrollPane;
     private ItemWidgetPanel itemWidgetPanel;
 
+    /**
+     * Constructor that accepts a Library object and an ItemWidgetPanel object
+     * @param library
+     * @param itemWidgetPanel
+     */
     LibraryWidget(Library library, ItemWidgetPanel itemWidgetPanel) {
         super(libraryWidgetPanel = new LibraryWidgetPanel(library, itemWidgetPanel), 3, library.getName());
         this.itemWidgetPanel = itemWidgetPanel;
@@ -206,24 +262,40 @@ class LibraryWidget extends SnapFromPanel {
         add(scrollPane);
     }
 
+    /**
+     * Returns the ItemWidgetPanel object
+     * @return ItemWidgetPanel
+     */
     ItemWidgetPanel getItemWidgetPanel() {
         return itemWidgetPanel;
     }
 
+    /**
+     * Returns the LibraryWidgetPanel object
+     * @return LibraryWidgetPanel
+     */
     LibraryWidgetPanel getWidgetPanel() {
         return libraryWidgetPanel;
     }
 
+    /**
+     * Returns the Library object
+     * @return Library
+     */
     Library getLibrary() {
         return libraryWidgetPanel.getLibrary();
     }
 
+    /**
+     * Updates the library in the LibraryWidgetPanel
+     * @param library
+     */
     void updateLibrary(Library library) {
         libraryWidgetPanel.updateLibrary(library);
     }
 } 
 
-
+// LibraryWidgetPanel class that is used to be put inside the LibraryWidget class (i.e. the panel that goes inside the snap panel)
 class LibraryWidgetPanel extends JPanel {
     public Item selectedItem = null;
     public ItemGrid itemGrid = new ItemGrid();
@@ -231,6 +303,11 @@ class LibraryWidgetPanel extends JPanel {
     private Library library;
     ItemSortWidget itemSortWidget = new ItemSortWidget();    
 
+    /**
+     * Constructor that accepts a Library object and an ItemWidgetPanel object
+     * @param library
+     * @param itemWidgetPanel
+     */
     LibraryWidgetPanel(Library library, ItemWidgetPanel itemWidgetPanel) {
         this.library = library;
         this.itemWidgetPanel = itemWidgetPanel;
@@ -241,12 +318,17 @@ class LibraryWidgetPanel extends JPanel {
         add(itemGrid);
     }
 
+    /**
+     * ItemSortWidget class that is used to display the sorting options in the LibraryWidgetPanel
+     */
     class ItemSortWidget extends JPanel {
         ItemSortWidget() {
             add(new JPanel() {
                 {
                     setLayout(new GridLayout(1, 4));
                     JLabel nameLabel = new JLabel("Name");
+                    // to sort a widget, simply click on the label of the attribute you want to sort by, this sorts the library in ascending order
+                    // and then replace the old library with the new sorted library, and then refresh the library
                     nameLabel.addMouseListener(new MouseAdapter() {
                         public void mouseClicked(MouseEvent e) {
                             System.out.println("Sorting by name");
@@ -298,6 +380,11 @@ class LibraryWidgetPanel extends JPanel {
         }
     }
 
+    /**
+     * Draws a vertical line
+     * this is basically useless but i'm keeping it here just in case
+     * @return JPanel
+     */
     JPanel drawVerticalLine() {
         return new JPanel() {
             {
@@ -316,6 +403,9 @@ class LibraryWidgetPanel extends JPanel {
         };
     }
 
+    /**
+     * Refreshes the library in the LibraryWidgetPanel
+     */
     void updateLibrary(Library library) {
         this.library = library;
         System.out.println("Updating library: " + library.getName());
@@ -336,22 +426,43 @@ class LibraryWidgetPanel extends JPanel {
         revalidate();
     }
 
+    /**
+     * Refreshes the library in the LibraryWidgetPanel
+     */
     void refresh() {
         System.out.println("Refreshing library: " + library.getName());
-        updateLibrary(library);
+        selectedItem = library.getSelectedItem();
+        for (Component component : itemGrid.getComponents()) {
+            if (component instanceof LibraryItem) {
+                ((LibraryItem) component).refresh();
+            }
+        }
     }
 
+    /**
+     * Returns the Library object
+     * @return Library
+     */
     Library getLibrary() {
         return library;
     }
 
+    /**
+     * Returns the selected item
+     * @return Item
+     */
     Item getSelectedItem() {
         return library.getSelectedItem();
     }
 
+    // LibraryItem class that is used to display an item in the LibraryWidgetPanel
     class LibraryItem extends JPanel {
         Item item = null;
 
+        /**
+         * Constructor that accepts an Item object, draws an item in the LibraryWidgetPanel
+         * @param item
+         */
         LibraryItem(Item item) {
             this.item = item;
             setLayout(new GridLayout(1, 4));
@@ -372,10 +483,17 @@ class LibraryWidgetPanel extends JPanel {
             add(dateLabel);
         }
         
+        /**
+         * Returns the Item object
+         * @return Item
+         */
         Item getItem() {
             return item;
         }
 
+        /**
+         * Selects the item in the LibraryWidgetPanel
+         */
         void select() {
             selectedItem = this.item;
             setBackground(Color.LIGHT_GRAY);
@@ -383,16 +501,44 @@ class LibraryWidgetPanel extends JPanel {
             itemWidgetPanel.updateItem(item);
         }
 
+        /**
+         * Deselects the item in the LibraryWidgetPanel
+         */
         void deselect() {
             selectedItem = null;
             setBackground(Color.WHITE);
             setBorder(BorderFactory.createEmptyBorder(5, 5, 5, 5));
         }
-
+        
+        /**
+         * Returns true if the item is selected, false otherwise
+         * @return boolean
+         */
         boolean isSelected() {
             return selectedItem == this.item;
         }
 
+        /**
+         * Refreshes the LibraryWidgetPanel
+         */
+        void refresh() {
+            removeAll();
+            setLayout(new GridLayout(1, 4));
+            JLabel nameLabel = new JLabel(item.getName());
+            add(nameLabel);
+            add(Box.createHorizontalGlue());
+            add(drawVerticalLine());
+            JLabel authorLastLabel = new JLabel(item.getAuthorLast());
+            add(authorLastLabel);
+            add(Box.createHorizontalGlue());
+            add(drawVerticalLine());
+            JLabel authorFirstLabel = new JLabel(item.getAuthorFirst());
+            add(authorFirstLabel);
+            add(Box.createHorizontalGlue());
+            add(drawVerticalLine());
+            JLabel dateLabel = new JLabel(item.getDateAdded() == null ? "" : item.getDateAdded().toString());
+            add(dateLabel);
+        }
     }
 
     class ItemGrid extends JPanel {
@@ -401,7 +547,10 @@ class LibraryWidgetPanel extends JPanel {
             setLayout(new GridLayout(15, 3, 5, 5));
             // setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
             setBackground(Color.WHITE);
-
+            /**
+             * Adds a mouse listener to the ItemGrid
+             * If the mouse is pressed on a LibraryItem, then the item is selected
+             */
             addMouseListener(new MouseAdapter() {
                 public void mousePressed(MouseEvent e) {
                     for (Component component : getComponents()) {
@@ -423,6 +572,27 @@ class LibraryWidgetPanel extends JPanel {
             });
         }
 
+        /**
+         * Refreshes the item grid
+         * @param library
+         */
+        static void refresh() {
+            System.out.println("Refreshing item grid");
+            LibraryWidgetPanel libraryWidgetPanel = LibraryWidget.libraryWidgetPanel;
+            for (Component component : libraryWidgetPanel.itemGrid.getComponents()) {
+                if (component instanceof LibraryItem) {
+                    ((LibraryItem) component).refresh();
+                }
+            }
+
+            libraryWidgetPanel.itemGrid.revalidate();
+            libraryWidgetPanel.itemGrid.repaint();
+        }
+
+        /**
+         * Adds an item to the LibraryWidgetPanel, as a textfield, and then adds the item to the library
+         * @param libraryWidgetPanel
+         */
         static void addBlankItem(LibraryWidgetPanel libraryWidgetPanel) {
             System.out.println("Adding blank item");
     
@@ -453,17 +623,24 @@ class LibraryWidgetPanel extends JPanel {
             libraryWidgetPanel.itemGrid.add(inputField);
             libraryWidgetPanel.itemGrid.revalidate();
             libraryWidgetPanel.itemGrid.repaint();
-            
+            // focusing is important
             inputField.requestFocusInWindow();
         }
     
-
+        /**
+         * Adds an item to the LibraryWidgetPanel
+         * @param item
+         */
         void addItem(Item item) {
             add(new LibraryItem(item));
             repaint();
             revalidate();
         }
 
+        /**
+         * Selects an item in the LibraryWidgetPanel
+         * @param item
+         */
         void selectItem(Item item) {
             for (Component component : getComponents()) {
                 if (component instanceof LibraryItem) {
@@ -476,6 +653,10 @@ class LibraryWidgetPanel extends JPanel {
             }
         }
 
+        /**
+         * Removes an item from the LibraryWidgetPanel
+         * @param item
+         */
         void removeItem(Item item) {
             for (Component component : getComponents()) {
                 if (component instanceof LibraryItem) {
@@ -492,10 +673,15 @@ class LibraryWidgetPanel extends JPanel {
 
 }
 
+// FileTreeWidget class that is used to display the file tree in the UI
 class FileTreeWidget extends SnapFromPanel {
     private JScrollPane scrollPane;
     static FileTreeWidgetPanel fileTreeWidgetPanel;
 
+    /**
+     * Constructor that accepts a FileTree object
+     * @param fileTree
+     */
     FileTreeWidget(FileTree fileTree) {
         super(fileTreeWidgetPanel = new FileTreeWidgetPanel(fileTree), 3, "File Tree");
         scrollPane = new JScrollPane(fileTreeWidgetPanel);
@@ -504,39 +690,60 @@ class FileTreeWidget extends SnapFromPanel {
     }
 }
 
+// FileTreeWidgetPanel class that is used to be put inside the FileTreeWidget class
 class FileTreeWidgetPanel extends JPanel {
     private FileTree fileTree;
 
+    /**
+     * Constructor that accepts a FileTree object
+     * @param fileTree
+     */
     FileTreeWidgetPanel(FileTree fileTree) {
         this.fileTree = fileTree;
         setLayout(new BorderLayout());
         add(fileTree, BorderLayout.CENTER);
     }
 
+    /**
+     * Returns the FileTree object
+     * @return FileTree
+     */
     void fromLibrary(Library library) {
         fileTree.fromLibrary(library);
     }
 
+    /**
+     * Refreshes the FileTree object
+     * @param library
+     */
     void refresh(Library library) {
         fileTree.fromLibrary(library);
     }
 }
 
+// LibraryWidget class that is used to display the library in the UI
 class FileTree extends JTree {
     private JPanel panel;
     private JTextField editor;
     private DefaultMutableTreeNode editableNode;
 
+    /**
+     * Constructor that creates a DefaultMutableTreeNode object
+     * @param root
+     */
     FileTree() {
         super(new DefaultMutableTreeNode("Papyrus"));
         createTreeNodes();
-
         editor = new JTextField();
         editor.setVisible(false);
         editor.addActionListener(e -> renameNode());
         add(editor);
 
         addMouseListener(new MouseAdapter() {
+            /**
+             * If the node is double clicked, then the node is editable
+             * @param e
+             */
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -554,6 +761,9 @@ class FileTree extends JTree {
         });
     }
 
+    /**
+     * Renames the node
+     */
     private void renameNode() {
         if (editableNode != null) {
             String newName = editor.getText();
@@ -568,8 +778,11 @@ class FileTree extends JTree {
             editableNode = null;
         }
     }
-    
 
+    /**
+     * updates the model of the tree from the library
+     * @param library
+     */
     public void fromLibrary(Library library) {
         DefaultMutableTreeNode root = new DefaultMutableTreeNode(library.getName());
         DefaultTreeModel model = (DefaultTreeModel) getModel();
@@ -584,6 +797,9 @@ class FileTree extends JTree {
         model.reload(); 
     }
 
+    /**
+     * Creates the tree nodes
+     */
     private void createTreeNodes() {
         DefaultTreeModel model = (DefaultTreeModel) getModel();
         DefaultMutableTreeNode root = (DefaultMutableTreeNode) model.getRoot();
@@ -595,6 +811,10 @@ class FileTree extends JTree {
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
     }
 
+    /**
+     * Returns the JPanel object
+     * @return JPanel
+     */
     void setPanel(JPanel panel) {
         this.panel = panel;
     }

@@ -1,6 +1,9 @@
 import javax.swing.*;
 import java.awt.*;
 
+
+// TopBar class that is at the top of the UI and contains the Add Item button
+// TODO: Add a button to merge items
 public class TopBar extends JPanel {
     private LibraryWidgetPanel libraryWidgetPanel; // Add a reference to LibraryWidgetPanel
 
@@ -19,8 +22,8 @@ public class TopBar extends JPanel {
         });
 
         add(Box.createHorizontalGlue());
-        add(new JButton("Button 2"));
-        add(new JButton("Button 3"));
+        // add(new JButton("Button 2"));
+        // add(new JButton("Button 3"));
         add(Box.createHorizontalGlue());
     }
 }

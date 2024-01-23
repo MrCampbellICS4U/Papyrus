@@ -12,6 +12,10 @@ import java.util.Date;
 
 class LibraryXMLParser {
 
+    /**
+     * Writes a library to an XML file
+     * @param library
+     */
     public static void writeLibrary(Library library) {
         String xmlString = "<Library>\n";
         xmlString += "\t<Name>" + library.getName() + "</Name>\n";
@@ -44,7 +48,13 @@ class LibraryXMLParser {
 
 
     }
-
+    
+    /**
+     * Parses an XML file into a Library object
+     * @param filePath
+     * @param comparator
+     * @return
+     */
     public static Library parseLibrary(String filePath, LibraryComparator comparator) {
         try {
             File xmlFile = new File(filePath);
@@ -79,6 +89,11 @@ class LibraryXMLParser {
         }
     }
 
+    /**
+     * Extracts the library description from an XML document
+     * @param doc
+     * @return
+     */
     private static String extractLibraryDescription(Document doc) {
         NodeList descList = doc.getElementsByTagName("Description");
         if (descList.getLength() > 0) {
@@ -87,6 +102,11 @@ class LibraryXMLParser {
         return "";
     }
 
+    /**
+     * Parses an XML element into an Item object
+     * @param element
+     * @return
+     */
     private static Item parseItem(Element element) {
         String name = element.getElementsByTagName("Name").item(0).getTextContent();
         Date datePublished = parseDate(element.getElementsByTagName("DatePublished").item(0).getTextContent());
@@ -100,7 +120,11 @@ class LibraryXMLParser {
         return new Item(name, datePublished, dateAdded, authorFirst, authorLast, doiString, urlString, isbnString);
     }
 
-
+    /**
+     * Parses a date string into a Date object
+     * @param dateStr
+     * @return
+     */
     private static Date parseDate(String dateStr) {
         try {
             return new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);

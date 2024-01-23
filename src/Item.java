@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+import java.util.UUID;
 
 public class Item {
 
+    // class attributes
     public ArrayList<String> tagList;
-    
     private String name;
-    private int id;
+    private int id = UUID.randomUUID().hashCode();
     private Date datePublished;
     private Date dateAdded;
     private String authorFirst;
@@ -19,9 +20,17 @@ public class Item {
     private String urlString;
     private String isbnString;
 
-    //public HashMap<Item, LibraryComparator.Type> compareMap;
-
-
+    /**
+     * Constructor for Item
+     * @param name
+     * @param datePublished
+     * @param dateAdded
+     * @param authorFirst
+     * @param authorLast
+     * @param doiString
+     * @param urlString
+     * @param isbnString
+     */
     public Item(String name, Date datePublished, Date dateAdded, String authorFirst, String authorLast, String doiString, String urlString, String isbnString) {
         this.name = name;
         this.datePublished = datePublished;
@@ -33,6 +42,10 @@ public class Item {
         this.isbnString = isbnString;
     }
 
+    /**
+     * Copy constructor for Item
+     * @param other
+     */
     public Item(Item other) {
         this.name = other.name;
         this.datePublished = other.datePublished;
@@ -45,6 +58,9 @@ public class Item {
         this.tagList = other.tagList;
     }
 
+    /**
+     * Default constructor for Item
+     */
     public Item() {
         this.name = "";
         this.datePublished = null;
@@ -57,6 +73,10 @@ public class Item {
         this.tagList = new ArrayList<String>();
     }
 
+    /**
+     * Constructor for Item
+     * @param name
+     */
     public Item(String name) {
         this.name = name;
         this.datePublished = null;
@@ -68,6 +88,8 @@ public class Item {
         this.isbnString = "";
         this.tagList = new ArrayList<String>();
     }
+
+    // Getter and setter methods for all the fields.
 
     public String getName() {
         return this.name;
@@ -158,6 +180,11 @@ public class Item {
         return new Item(other);
     }
 
+    /**
+     * Sets the info of the item based on the compare type
+     * @param compareType
+     * @param info
+     */
     public void setInfo(LibraryComparator.Type compareType, String info) {
         switch (compareType) {
             case NAME:
@@ -190,6 +217,11 @@ public class Item {
         }
     }
 
+    /**
+     * Gets the comparator type name
+     * @param compareType
+     * @return
+     */
     public String getComparatorTypeName(LibraryComparator.Type compareType) {
         switch (compareType) {
             case NAME:
@@ -230,7 +262,11 @@ public class Item {
         }
     }
 
-
+    /**
+     * Gets the info of the item based on the compare type
+     * @param compareType
+     * @return
+     */
     public String getInfo(LibraryComparator.Type compareType) {
         switch (compareType) {
             case NAME:
