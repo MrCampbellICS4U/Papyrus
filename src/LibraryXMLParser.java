@@ -109,27 +109,14 @@ class LibraryXMLParser {
      */
     private static Item parseItem(Element element) {
         String name = element.getElementsByTagName("Name").item(0).getTextContent();
-        Date datePublished = parseDate(element.getElementsByTagName("DatePublished").item(0).getTextContent());
-        Date dateAdded = parseDate(element.getElementsByTagName("DateAdded").item(0).getTextContent());
+        String datePublishedStr = element.getElementsByTagName("DatePublished").item(0).getTextContent();
+        String dateAddedStr = element.getElementsByTagName("DateAdded").item(0).getTextContent();
         String authorFirst = element.getElementsByTagName("AuthorFirst").item(0).getTextContent();
         String authorLast = element.getElementsByTagName("AuthorLast").item(0).getTextContent();
         String doiString = element.getElementsByTagName("DoiString").item(0).getTextContent();
         String urlString = element.getElementsByTagName("UrlString").item(0).getTextContent();
         String isbnString = element.getElementsByTagName("IsbnString").item(0).getTextContent();
 
-        return new Item(name, datePublished, dateAdded, authorFirst, authorLast, doiString, urlString, isbnString);
-    }
-
-    /**
-     * Parses a date string into a Date object
-     * @param dateStr
-     * @return
-     */
-    private static Date parseDate(String dateStr) {
-        try {
-            return new SimpleDateFormat("yyyy-MM-dd").parse(dateStr);
-        } catch (Exception e) {
-            return null;
-        }
+        return new Item(name, datePublishedStr, dateAddedStr, authorFirst, authorLast, doiString, urlString, isbnString);
     }
 }

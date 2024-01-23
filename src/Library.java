@@ -9,8 +9,8 @@ public class Library extends TreeSet<Item> {
     public Set<Tags> tags;
     public String name = "Library1";
     public String path = "Library1.ppxml";
-    public Date dateCreated = new Date();
-    public Date dateModified = new Date();
+    public DatePanel dateCreated = new DatePanel();
+    public DatePanel dateModified = new DatePanel();
     private Item selectedItem = null;
 
     public String description = "This is a library";
@@ -59,16 +59,16 @@ public class Library extends TreeSet<Item> {
      * gets the date the library was created
      * @return dateCreated
      */
-    public Date getDateCreated() {
-        return this.dateCreated;
+    public String getDateCreated() {
+        return this.dateCreated.toString();
     }
 
     /**
      * gets the date the library was modified
      * @return dateModified
      */
-    public Date getDateModified() {
-        return this.dateModified;
+    public String getDateModified() {
+        return this.dateModified.toString();
     }
 
     /**

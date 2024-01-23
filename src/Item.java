@@ -12,8 +12,8 @@ public class Item {
     public ArrayList<String> tagList;
     private String name;
     private int id = UUID.randomUUID().hashCode();
-    private Date datePublished;
-    private Date dateAdded;
+    private DatePanel datePublished;
+    private DatePanel dateAdded;
     private String authorFirst;
     private String authorLast;
     private String doiString;
@@ -31,10 +31,10 @@ public class Item {
      * @param urlString
      * @param isbnString
      */
-    public Item(String name, Date datePublished, Date dateAdded, String authorFirst, String authorLast, String doiString, String urlString, String isbnString) {
+    public Item(String name, String datePublished, String dateAdded, String authorFirst, String authorLast, String doiString, String urlString, String isbnString) {
         this.name = name;
-        this.datePublished = datePublished;
-        this.dateAdded = dateAdded;
+        this.datePublished = DatePanel.fromString(datePublished);
+        this.dateAdded = DatePanel.fromString(dateAdded);
         this.authorFirst = authorFirst;
         this.authorLast = authorLast;
         this.doiString = doiString;
@@ -99,11 +99,11 @@ public class Item {
         return this.id;
     }
 
-    public Date getDatePublished() {
+    public DatePanel getDatePublished() {
         return this.datePublished;
     }
 
-    public Date getDateAdded() {
+    public DatePanel getDateAdded() {
         return this.dateAdded;
     }
 
@@ -135,12 +135,12 @@ public class Item {
         return id = this.id;
     }
 
-    public Date setDatePublished(Date datePublished) {
-        return datePublished = this.datePublished;
+    public String setDatePublished(String datePublished) {
+        return datePublished = this.datePublished.toString();
     }
 
-    public Date setDateAdded(Date setDateAdded) {
-        return setDateAdded = this.dateAdded;
+    public String setDateAdded(String setDateAdded) {
+        return setDateAdded = this.dateAdded.toString();
     }
 
     public String setAuthorFirst(String authorString) {
@@ -194,10 +194,10 @@ public class Item {
                 this.id = Integer.parseInt(info);
                 break;
             case DATEPUBLISHED:
-                this.datePublished = new Date(info);
+                this.datePublished = DatePanel.fromString(info);
                 break;
             case DATEADDED:
-                this.dateAdded = new Date(info);
+                this.dateAdded = DatePanel.fromString(info);
                 break;
             case AUTHORFIRST:
                 this.authorFirst = info;
@@ -229,14 +229,8 @@ public class Item {
             case ID: 
                 return null;
             case DATEPUBLISHED:
-                if (this.datePublished == null) {
-                    return "";
-                }
                 return "Date Published";
             case DATEADDED:
-                if (this.dateAdded == null) {
-                    return "";
-                }
                 return "Date Added";
             case AUTHORFIRST:
                 return "Author First";
@@ -290,5 +284,4 @@ public class Item {
         }
         return "";
     }
-
 }

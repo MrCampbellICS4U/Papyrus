@@ -37,19 +37,27 @@ public class Papyrus {
         PapyrusMenuBar() {
             // Create the file menu
             JMenu fileMenu = new JMenu("File");
+
             JMenuItem newItem = new JMenuItem("New");
+
             JMenuItem openItem = new JMenuItem("Open", KeyEvent.VK_O | KeyEvent.CTRL_DOWN_MASK);
             openItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_O, KeyEvent.CTRL_DOWN_MASK));
+
             JMenuItem saveItem = new JMenuItem("Save", KeyEvent.VK_S | KeyEvent.CTRL_DOWN_MASK);
             saveItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK));
+
             JMenuItem saveAsItem = new JMenuItem("Save As", KeyEvent.VK_S | KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK);
             saveAsItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S, KeyEvent.CTRL_DOWN_MASK | KeyEvent.SHIFT_DOWN_MASK));
+
+            JMenuItem importItem = new JMenuItem("Import", KeyEvent.VK_I | KeyEvent.CTRL_DOWN_MASK);
+            importItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_I, KeyEvent.CTRL_DOWN_MASK));
+
             JMenu exportAsItem = new JMenu("Export");
             JMenuItem exportAsBibtex = new JMenuItem("Export as BibTeX");
+
             JMenuItem quitItem = new JMenuItem("Quit Papyrus", KeyEvent.VK_Q | KeyEvent.CTRL_DOWN_MASK);
             quitItem.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, KeyEvent.CTRL_DOWN_MASK));
-            
-            
+
             
             saveItem.addActionListener(new ActionListener() {
                 /**
@@ -107,9 +115,46 @@ public class Papyrus {
                         }
                     } else {
                         JOptionPane.showMessageDialog(null, "No library to export.", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+            });
+
+            importItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JFileChooser fileChooser = new JFileChooser();
+                        FileNameExtensionFilter bibFilter = new FileNameExtensionFilter("BibTeX Files (.bib)", "bib");
+                        FileNameExtensionFilter xmlFilter = new FileNameExtensionFilter("Papyrus XML Files (.ppxml)", "ppxml");
+                        fileChooser.setFileFilter(bibFilter);
+                        fileChooser.setFileFilter(xmlFilter);
+
+                        int result = fileChooser.showOpenDialog(null);
+                        if (result == JFileChooser.APPROVE_OPTION) {
+                            File selectedFile = fileChooser.getSelectedFile();
+                            if (selectedFile.getName().endsWith(".bib")) {
+                                Library library = LibraryBibtexParser.parseLibrary(selectedFile.getAbsolutePath(), LibraryComparator.Type.NAME);
+                                PapyrusPanel.library.addAll(library);
+                                LibraryWidget libraryWidget = PapyrusPanel.libraryWidget;
+                                libraryWidget.updateLibrary(library);
+                                libraryWidget.getWidgetPanel().updateLibrary(library);
+                                LibraryWidgetPanel.ItemGrid.refresh();
+                                libraryWidget.getWidgetPanel().repaint();
+                                libraryWidget.getWidgetPanel().revalidate();
+                                libraryWidget.getWidgetPanel().itemGrid.revalidate();
+                                libraryWidget.getWidgetPanel().itemGrid.repaint();
+                                
+                            }
+                            else if (selectedFile.getName().endsWith(".ppxml")) {
+                                Library library = LibraryXMLParser.parseLibrary(selectedFile.getAbsolutePath(), new LibraryComparator(LibraryComparator.Type.NAME));
+                                PapyrusPanel.library.addAll(library);
+                            }
+                            else {
+                                JOptionPane.showMessageDialog(null, "Invalid file type.", "Error", JOptionPane.ERROR_MESSAGE);
+                            }
+                        }
                     }
                 }
-            });
+            );
 
             quitItem.addActionListener(new ActionListener() {
                 /**
@@ -137,9 +182,10 @@ public class Papyrus {
             fileMenu.add(saveItem);
             fileMenu.add(saveAsItem);
             exportAsItem.add(exportAsBibtex);
+            fileMenu.add(importItem);
+            fileMenu.add(exportAsItem);
             fileMenu.add(exportAsItem);
             fileMenu.add(quitItem);
-
             this.add(fileMenu);
         }
         /** 

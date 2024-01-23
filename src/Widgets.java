@@ -77,7 +77,8 @@ class ItemWidgetPanel extends JPanel {
     // ItemAttributeWidget class that is used to display an item attribute in the Item Widget Panel, whcih is editable
     class ItemAttributeWidget extends JPanel {
         LibraryComparator.Type itemAttribute = null;
-
+        DatePanel dateAddedPanel = null;
+        DatePanel datePublishedPanel = null;
         /**
          * Constructor that accepts a LibraryComparator.Type object
          * @param itemAttribute
@@ -108,6 +109,20 @@ class ItemWidgetPanel extends JPanel {
             });
 
             add(Box.createHorizontalGlue());
+            if (itemAttribute == LibraryComparator.Type.DATEADDED || itemAttribute == LibraryComparator.Type.DATEPUBLISHED) {
+                if (itemAttribute == LibraryComparator.Type.DATEADDED) {
+                    System.out.println(item.getInfo(itemAttribute));
+                    dateAddedPanel = new DatePanel(DatePanel.fromString(item.getInfo(itemAttribute)));
+                    add(dateAddedPanel);
+                    dateAddedPanel.addDateChangeListener(item, itemAttribute);
+                } else {
+                    System.out.println(item.getInfo(itemAttribute));
+
+                    datePublishedPanel = new DatePanel(DatePanel.fromString(item.getInfo(itemAttribute)));
+                    add(datePublishedPanel);
+                    datePublishedPanel.addDateChangeListener(item, itemAttribute);
+                }
+            } else {
             JTextField nameTextField = new JTextField(item.getInfo(itemAttribute));
             nameTextField.setSize(50, 12);
 
@@ -122,6 +137,7 @@ class ItemWidgetPanel extends JPanel {
             });
 
             add(nameTextField);
+            }
         }
 
         /**
@@ -479,8 +495,8 @@ class LibraryWidgetPanel extends JPanel {
             add(authorFirstLabel);
             add(Box.createHorizontalGlue());
             add(drawVerticalLine());
-            JLabel dateLabel = new JLabel(item.getDateAdded() == null ? "" : item.getDateAdded().toString());
-            add(dateLabel);
+            JPanel datePanel = new DatePanel();
+            add(datePanel);
         }
         
         /**
